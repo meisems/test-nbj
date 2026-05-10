@@ -1,35 +1,34 @@
 package com.nbj.servlet;
 
+import com.nbj.util.DatabaseUtil;
 import java.io.IOException;
 import java.sql.*;
-import jakarta.servlet.*;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
 @WebServlet("/updateStatus")
 public class UpdateStatusServlet extends HttpServlet {
- protected void doPost(HttpServletRequest request, HttpServletResponse response)
- throws ServletException, IOException {
 
-  String id = request.getParameter("id");
-  String status = request.getParameter("status");
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-  try {
-   Connection conn = DriverManager.getConnection(
-    "jdbc:mysql://localhost:3306/nbj_repair","root","");
+        String id = request.getParameter("id");
+        String status = request.getParameter("status");
 
-   PreparedStatement ps = conn.prepareStatement(
-    "UPDATE repairs SET status=? WHERE id=?");
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(
+                     "UPDATE repairs SET status=? WHERE id=?")) {
 
-   ps.setString(1, status);
-   ps.setString(2, id);
+            ps.setString(1, status);
+            ps.setString(2, id);
+            ps.executeUpdate();
 
-   ps.executeUpdate();
+            response.sendRedirect("history.jsp?success=status");
 
-   response.sendRedirect("history.jsp");
-
-  } catch(Exception e) {
-   e.printStackTrace();
-  }
- }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendRedirect("history.jsp?error=status");
+        }
+    }
 }
