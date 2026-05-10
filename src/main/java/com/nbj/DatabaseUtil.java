@@ -1,4 +1,4 @@
-package com.nbj.util;
+package com.nbj;
 
 import java.sql.*;
 
@@ -18,12 +18,13 @@ public class DatabaseUtil {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
-            System.err.println("MySQL Driver not found!");
+            System.err.println("MySQL JDBC Driver not found!");
             e.printStackTrace();
         }
     }
 
     public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL, USER, PASSWORD);
+        Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+        return conn;
     }
 }
