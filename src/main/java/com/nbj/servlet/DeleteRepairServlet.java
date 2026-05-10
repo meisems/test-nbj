@@ -1,6 +1,6 @@
 package com.nbj.servlet;
 
-import com.nbj.util.DatabaseUtil;
+import com.nbj.DatabaseUtil;
 import java.io.IOException;
 import java.sql.*;
 import jakarta.servlet.ServletException;
