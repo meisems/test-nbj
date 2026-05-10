@@ -1,32 +1,31 @@
 package com.nbj.servlet;
 
+import com.nbj.util.DatabaseUtil;
 import java.io.IOException;
 import java.sql.*;
-import jakarta.servlet.*;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
 @WebServlet("/deleteRepair")
 public class DeleteRepairServlet extends HttpServlet {
- protected void doGet(HttpServletRequest request, HttpServletResponse response)
- throws ServletException, IOException {
 
-  String id = request.getParameter("id");
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-  try {
-   Connection conn = DriverManager.getConnection(
-    "jdbc:mysql://localhost:3306/nbj_repair","root","");
+        String id = request.getParameter("id");
 
-   PreparedStatement ps = conn.prepareStatement(
-    "DELETE FROM repairs WHERE id=?");
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement("DELETE FROM repairs WHERE id=?")) {
 
-   ps.setString(1, id);
-   ps.executeUpdate();
+            ps.setString(1, id);
+            ps.executeUpdate();
 
-   response.sendRedirect("history.jsp");
+            response.sendRedirect("history.jsp?success=deleted");
 
-  } catch(Exception e) {
-   e.printStackTrace();
-  }
- }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendRedirect("history.jsp?error=delete");
+        }
+    }
 }
