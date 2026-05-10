@@ -1,16 +1,14 @@
-# Stage 1: Build the WAR using Maven
+# Stage 1: Build the application
 FROM maven:3.8.5-openjdk-17 AS build
 COPY . .
 RUN mvn clean package -DskipTests
 
-# Stage 2: Run in Tomcat 10
-FROM tomcat:10.1-jdk17-openjdk-slim
-
-# Remove default Tomcat apps
+# Stage 2: Run the application in Tomcat
+FROM tomcat:9.0-jdk17-openjdk-slim
+# Remove default Tomcat apps to stay lightweight
 RUN rm -rf /usr/local/tomcat/webapps/*
-
-# Copy the built WAR file to the webapps folder as ROOT.war
-# This ensures your site opens at the base URL (e.g., your-app.onrender.com)
+# Copy the WAR file from the build stage to the Tomcat webapps folder
+# Replace 'NBJ-Repair-Center.war' with the actual name of your generated WAR file
 COPY --from=build /target/*.war /usr/local/tomcat/webapps/ROOT.war
 
 EXPOSE 8080
